@@ -1,16 +1,22 @@
-# this allows us to use code from
-# the open-source pygame library
-# throughout this file
-import pygame
+import pygame,sys
+
 from constants import *
 from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
+from shot import Shot
 
 def main():
+    
     pygame.init()
+    pygame.mixer.init()
+
+    explosion_sound = pygame.mixer.Sound("sounds/explosion.wav")
+
     pygame.display.set_caption("Asteroids!")
+    
     screen = pygame.display.set_mode( (SCREEN_WIDTH, SCREEN_HEIGHT) )
+    
     print("Starting Asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}")
     print(f"Screen height: {SCREEN_HEIGHT}")
@@ -21,10 +27,11 @@ def main():
     updatable = pygame.sprite.Group()
     drawable  = pygame.sprite.Group()
     asteroids = pygame.sprite.Group()
+    shots     = pygame.sprite.Group()
     
     AsteroidField.containers = (updatable,)
-    
     Asteroid.containers = (asteroids, updatable, drawable)
+    Shot.containers = (shots,drawable, updatable)
     Player.containers = (updatable,drawable)
 
     asteroid_field = AsteroidField()
@@ -45,11 +52,18 @@ def main():
         for thing in drawable:
             thing.draw(screen)
         
+        for asteroid in asteroids:
+            if asteroid.collided(player):
+                explosion_sound.play()
+                print('Game over!')
+                pygame.time.delay(3000)
+                sys.exit()
+
         # Swap display buffers
         pygame.display.flip()
-        
+
          # Update delta time
-        time_passed = clock.tick(60)  # Pauses the game loop to maintain 60 FPS
+        time_passed = clock.tick(MAX_FPS)  # Pauses the game loop to maintain 60 FPS
         dt = time_passed / 1000  # Converts ms to seconds
 
 if __name__ == "__main__":
