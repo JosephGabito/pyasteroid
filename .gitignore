@@ -1,3 +1,29 @@
-venv/
+# Build artifacts
+build/
+dist/
+*.spec
+
+# Installer outputs
+*.dmg
+*.exe
+*.app
+
+# Python cache
 __pycache__/
+*.py[cod]
+*.pyo
+
+# Virtual environments
+venv/
+.venv/
+env/
+
+# macOS system files
 .DS_Store
+
+# Logs, temporary, editor stuff
+*.log
+*.tmp
+.vscode/
+
+release/
