@@ -5,18 +5,36 @@ from player import Player
 from asteroid import Asteroid
 from asteroidfield import AsteroidField
 from shot import Shot
+from score import Score
+import random
+
+stars = [{"x": random.randint(0, SCREEN_HEIGHT), "y": random.randint(0, SCREEN_WIDTH)} for _ in range(100)]
+
+def update_stars():
+    for star in stars:
+        star["y"] += 1
+        if star["y"] > SCREEN_HEIGHT:
+            star["y"] = random.randint(0, SCREEN_HEIGHT)
+            star["x"] = random.randint(0, SCREEN_WIDTH)
+
+def draw_stars( screen ):
+    for star in stars:
+        pygame.draw.circle(screen, (255, 255, 255), (star["x"], star["y"]), 1)
 
 def main():
     
     pygame.init()
     pygame.mixer.init()
+    pygame.font.init()
 
     explosion_sound  = pygame.mixer.Sound("sounds/explosion.wav")
     impact_sound     = pygame.mixer.Sound("sounds/impact.wav")
-
-    pygame.display.set_caption("Asteroids!")
+        
+    pygame.display.set_caption("Asteroids version 0.0.1 by Joseph Gabito")
     
     screen = pygame.display.set_mode( (SCREEN_WIDTH, SCREEN_HEIGHT) )
+    
+    background = pygame.image.load("assets/parallax.png").convert()
     
     print("Starting Asteroids!")
     print(f"Screen width: {SCREEN_WIDTH}")
@@ -40,6 +58,8 @@ def main():
     player = Player(SCREEN_WIDTH / 2,SCREEN_HEIGHT / 2) #Middle of the screen.
     player.draw(screen)
 
+    score = Score()
+
     while True:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
@@ -47,6 +67,11 @@ def main():
         
         # Clear the screen
         screen.fill("#121212")
+        score.render(screen)
+        
+        update_stars()
+        draw_stars(screen)
+        
         # Update the updatable, then redraw it
         updatable.update(dt)
 
@@ -54,10 +79,10 @@ def main():
             thing.draw(screen)
         
         for asteroid in asteroids:
-            
             # Bullet collision
             for bullet in shots:
                 if bullet.collided(asteroid):
+                    score.add(asteroid)
                     asteroid.split(dt)
                     impact_sound.play()
                     
@@ -67,6 +92,8 @@ def main():
                 print('Game over!')
                 pygame.time.delay(3000)
                 sys.exit()
+
+      
 
         # Swap display buffers
         pygame.display.flip()

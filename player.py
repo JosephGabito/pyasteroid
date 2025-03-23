@@ -10,6 +10,9 @@ class Player(CircleShape):
     
     def __init__(self,x,y):
         
+        self.ship_img = pygame.image.load("assets/spaceship02.png").convert_alpha()
+        self.ship_img = pygame.transform.scale(self.ship_img, (50, 50))
+
         self.shot_laser_sound = pygame.mixer.Sound("sounds/shot-laser.wav")
         
         super().__init__(x,y,PLAYER_RADIUS)
@@ -27,7 +30,10 @@ class Player(CircleShape):
         return [a, b, c]
     
     def draw(self,screen):
-        pygame.draw.polygon(screen, 'white', self.triangle(), 2)
+       # pygame.draw.polygon(screen, 'white', self.triangle(), 2)
+        rect = self.ship_img.get_rect(center=(self.position.x, self.position.y))
+        rotated_image = pygame.transform.rotate(self.ship_img, -self.rotation)
+        screen.blit(rotated_image, rect)
         
     def move_up(self,dt):
         forward = pygame.Vector2(0, 1).rotate(self.rotation)
