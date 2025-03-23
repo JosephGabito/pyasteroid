@@ -9,6 +9,9 @@ class Player(CircleShape):
     timer = 0
     
     def __init__(self,x,y):
+        
+        self.shot_laser_sound = pygame.mixer.Sound("sounds/shot-laser.wav")
+        
         super().__init__(x,y,PLAYER_RADIUS)
         self.rotation = 180
     
@@ -62,6 +65,7 @@ class Player(CircleShape):
         rotated_vector = direction_vector.rotate(self.rotation)
         shot = Shot(self.position.x, self.position.y, SHOT_RADIUS )
         shot.velocity = (shot.velocity + rotated_vector) * PLAYER_SHOOT_SPEED
+        self.shot_laser_sound.play()
 
 
 

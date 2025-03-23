@@ -11,7 +11,8 @@ def main():
     pygame.init()
     pygame.mixer.init()
 
-    explosion_sound = pygame.mixer.Sound("sounds/explosion.wav")
+    explosion_sound  = pygame.mixer.Sound("sounds/explosion.wav")
+    impact_sound     = pygame.mixer.Sound("sounds/impact.wav")
 
     pygame.display.set_caption("Asteroids!")
     
@@ -53,6 +54,14 @@ def main():
             thing.draw(screen)
         
         for asteroid in asteroids:
+            
+            # Bullet collision
+            for bullet in shots:
+                if bullet.collided(asteroid):
+                    asteroid.split(dt)
+                    impact_sound.play()
+                    
+            # Player collision
             if asteroid.collided(player):
                 explosion_sound.play()
                 print('Game over!')
